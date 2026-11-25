@@ -1,0 +1,25 @@
+services:
+  frontend:
+    build:
+      context: ./front-end/my-app
+      dockerfile: Dockerfile
+      args:
+        PUBLIC_DUBBING_API_URL: ${PUBLIC_DUBBING_API_URL:-}
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      PORT: 8080
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?Set GEMINI_API_KEY in the project-root .env file}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-live-translate-preview}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
