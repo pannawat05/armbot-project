@@ -1,26 +1,24 @@
 <script>
 	import StructureModelViewer from '#lib/StructureModelViewer.svelte';
+	import { t } from '#lib/site-preferences.svelte.js';
 
 	let selectedPart = $state('base');
 </script>
 
 <svelte:head>
-	<title>Structure — ARMbot</title>
-	<meta
-		name="description"
-		content="สำรวจโมเดล ARMbot แบบโต้ตอบ คลิกเลือกฐาน ข้อต่อ แขน กริปเปอร์ และกล้องเพื่อดูองค์ประกอบ"
-	/>
+	<title>{t('nav.structure')} — ARMbot</title>
+	<meta name="description" content={t('structure.meta')} />
 </svelte:head>
 
 <main class="structure-page">
 	<section class="structure-heading">
 		<div>
-			<p class="eyebrow"><span></span> MECHANICAL OVERVIEW / 02</p>
-			<h1>Structure<br /><em>explorer.</em></h1>
+			<p class="eyebrow"><span></span> {t('structure.eyebrow')}</p>
+			<h1>{t('structure.heading1')}<br /><em>{t('structure.heading2')}</em></h1>
 		</div>
 		<div class="heading-aside">
-			<p>สำรวจโมเดล ARMbot จากไฟล์ GLB หมุนและซูมดูได้ พร้อมคลิกดูส่วนประกอบในแต่ละตำแหน่ง</p>
-			<a href="/working-steps">ดูขั้นตอนการทำงาน <span>↗</span></a>
+			<p>{t('structure.description')}</p>
+			<a href="/working-steps">{t('structure.stepsLink')} <span>↗</span></a>
 		</div>
 	</section>
 

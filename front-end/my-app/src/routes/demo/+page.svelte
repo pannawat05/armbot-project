@@ -1,42 +1,40 @@
 <script>
 	import DubbedVideoPlayer from '#lib/DubbedVideoPlayer.svelte';
+	import { t } from '#lib/site-preferences.svelte.js';
 
 	const demoVideo = '/video/IoT.mp4';
 </script>
 
 <svelte:head>
-	<title>Demo — ARMbot</title>
-	<meta name="description" content="ทดลองเล่นวิดีโอและระบบพากย์เสียง AI ของ ARMbot" />
+	<title>{t('demo.title')} — ARMbot</title>
+	<meta name="description" content={t('demo.meta')} />
 </svelte:head>
 
 <main class="demo-page">
 	<div class="page-heading">
 		<div>
-			<p class="eyebrow">INTERACTIVE DEMO / 01</p>
-			<h1>ลองใช้งาน<span>.</span></h1>
-			<p class="description">
-				หน้า demo สำหรับทดลองเล่นคลิปและระบบพากย์เสียง AI เลือกภาษาแล้วกดพากย์
-				จากนั้นเริ่มเล่นวิดีโอ
-			</p>
+			<p class="eyebrow">{t('demo.eyebrow')}</p>
+			<h1>{t('demo.title')}<span>.</span></h1>
+			<p class="description">{t('demo.description')}</p>
 		</div>
-		<a class="back-link" href="/">← กลับหน้าภาพรวม</a>
+		<a class="back-link" href="/">{t('demo.back')}</a>
 	</div>
 
-	<section class="demo-panel" aria-label="Video dubbing demo">
+	<section class="demo-panel" aria-label={t('demo.aria')}>
 		<div class="panel-topline">
-			<span><i></i> VIDEO DUBBING PLAYER</span>
-			<span>LOCAL DEMO</span>
+			<span><i></i> {t('demo.player')}</span>
+			<span>{t('demo.local')}</span>
 		</div>
 		<DubbedVideoPlayer src={demoVideo} />
 		<p class="demo-note">
-			ระบบพากย์ต้องเปิด backend และตั้งค่า <code>GEMINI_API_KEY</code> ก่อนใช้งาน
+			{t('demo.requirement')} <code>GEMINI_API_KEY</code>
 		</p>
 	</section>
 
 	<div class="demo-footer">
-		<span>PLAYER / VIDEO + REALTIME AUDIO</span>
-		<a href="/structure">สำรวจ Structure <span>↗</span></a>
-		<a href="/working-steps">Working Steps <span>↗</span></a>
+		<span>{t('demo.realtime')}</span>
+		<a href="/structure">{t('demo.exploreStructure')} <span>↗</span></a>
+		<a href="/working-steps">{t('demo.exploreSteps')} <span>↗</span></a>
 	</div>
 </main>
 

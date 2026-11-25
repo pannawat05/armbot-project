@@ -1,4 +1,6 @@
 <script>
+	import { t } from '#lib/site-preferences.svelte.js';
+
 	const frames = [
 		{ src: '/images/structure/robot-01.jpg', time: '01:57', duration: 'PT1M57S' },
 		{ src: '/images/structure/robot-02.jpg', time: '02:00', duration: 'PT2M' },
@@ -10,23 +12,23 @@
 </script>
 
 <svelte:head>
-	<title>Working Steps — ARMbot</title>
-	<meta name="description" content="ภาพ 6 ขั้นตอนการทำงานของหุ่นยนต์ ARMbot จากวิดีโอสาธิต" />
+	<title>{t('nav.steps')} — ARMbot</title>
+	<meta name="description" content={t('steps.meta')} />
 </svelte:head>
 
 <main class="structure-page">
 	<section class="structure-heading">
 		<div>
-			<p class="eyebrow"><span></span> ARMbot / WORKING STEPS</p>
-			<h1>Working<br /><em>Steps.</em></h1>
+			<p class="eyebrow"><span></span> {t('steps.eyebrow')}</p>
+			<h1>{t('steps.heading1')}<br /><em>{t('steps.heading2')}</em></h1>
 		</div>
 		<div class="heading-aside">
-			<p>ภาพจริง 6 ช่วงจากวิดีโอสาธิต คลิกที่ภาพเพื่อเปิดดูภาพขนาดเต็ม</p>
-			<a href="/structure">ดูโครงสร้าง ARMbot <span>↗</span></a>
+			<p>{t('steps.description')}</p>
+			<a href="/structure">{t('steps.structureLink')} <span>↗</span></a>
 		</div>
 	</section>
 
-	<section class="frame-gallery" aria-label="ภาพหุ่นยนต์ ARMbot จากวิดีโอ">
+	<section class="frame-gallery" aria-label={t('steps.gallery')}>
 		{#each frames as frame, index (frame.src)}
 			<figure class="frame-card">
 				<a
@@ -34,21 +36,21 @@
 					href={frame.src}
 					target="_blank"
 					rel="noopener noreferrer"
-					aria-label={`เปิดภาพที่ ${index + 1} ขนาดเต็ม`}
+					aria-label={t('steps.openImage', { index: index + 1 })}
 				>
 					<img
 						src={frame.src}
-						alt={`ภาพหุ่นยนต์ ARMbot จากวิดีโอ เวลา ${frame.time}`}
+						alt={t('steps.imageAlt', { time: frame.time })}
 						width="1400"
 						height="980"
 						loading={index < 2 ? 'eager' : 'lazy'}
 						decoding="async"
 					/>
-					<span class="zoom-label">ดูภาพเต็ม ↗</span>
+					<span class="zoom-label">{t('steps.fullImage')}</span>
 				</a>
 				<figcaption>
-					<span>ภาพที่ {String(index + 1).padStart(2, '0')}</span>
-					<time datetime={frame.duration}>คลิป {frame.time}</time>
+					<span>{t('steps.frame', { index: String(index + 1).padStart(2, '0') })}</span>
+					<time datetime={frame.duration}>{t('steps.clip', { time: frame.time })}</time>
 				</figcaption>
 			</figure>
 		{/each}

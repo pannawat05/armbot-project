@@ -1,16 +1,17 @@
 <script>
   import { onDestroy, onMount } from 'svelte';
   import { PUBLIC_DUBBING_API_URL } from '$env/static/public';
+  import { preferences, t } from '#lib/site-preferences.svelte.js';
 
   // รับค่า URL วิดีโอผ่าน Props
   let { src } = $props();
 
   const LANGUAGES = [
-    { code: 'Thai', label: '🇹🇭 ภาษาไทย' },
-    { code: 'English', label: '🇺🇸 อังกฤษ (English)' },
-    { code: 'Japanese', label: '🇯🇵 ญี่ปุ่น (Japanese)' },
-    { code: 'Chinese', label: '🇨🇳 จีน (Mandarin)' },
-    { code: 'Korean', label: '🇰🇷 เกาหลี (Korean)' },
+    { code: 'Thai', flag: '🇹🇭', name: 'thai' },
+    { code: 'English', flag: '🇺🇸', name: 'english' },
+    { code: 'Japanese', flag: '🇯🇵', name: 'japanese' },
+    { code: 'Chinese', flag: '🇨🇳', name: 'chinese' },
+    { code: 'Korean', flag: '🇰🇷', name: 'korean' },
   ];
 
   // State ของ Component
@@ -22,7 +23,15 @@
   let isFullscreen = $state(false);
   let targetLang = $state('Thai');
   let progress = $state(0);
-  let status = $state('เสียงต้นฉบับ');
+  let statusKey = $state('player.original');
+  let statusLanguage = $state('');
+  let statusDetail = $state('');
+  let status = $derived(
+    t(statusKey, {
+      language: getDubbingLanguageLabel(statusLanguage),
+      message: statusDetail
+    })
+  );
 
   // ตัวแปรจัดการ Audio และ WebSocket
   /** @type {WebSocket | null} */
@@ -32,6 +41,17 @@
   /** @type {GainNode | null} */
   let originalAudioGain = null;
   let nextPlayTime = 0;
+
+  function getDubbingLanguageLabel(code) {
+    const language = LANGUAGES.find((item) => item.code === code);
+    return language ? t(`language.${language.name}`) : code;
+  }
+
+  function setStatus(key, language = '', detail = '') {
+    statusKey = key;
+    statusLanguage = language;
+    statusDetail = detail;
+  }
 
   onMount(() => {
     const updateFullscreenState = () => {
@@ -51,7 +71,7 @@
       }
     } catch (error) {
       console.error('Unable to toggle player fullscreen:', error);
-      status = 'ผิดพลาด: ไม่สามารถเปิดเต็มจอได้';
+      setStatus('player.errorFullscreen');
     }
   }
 
@@ -94,14 +114,13 @@
     if (audioCtx?.state === 'suspended') {
       audioCtx.resume().catch((error) => {
         console.error('Unable to resume audio context:', error);
-        status = 'ผิดพลาด: ไม่สามารถเริ่มระบบเสียงได้';
+        setStatus('player.errorAudio');
       });
     }
 
     if (ws) ws.close();
 
-    const langObj = LANGUAGES.find((l) => l.code === langCode);
-    status = `กำลังเชื่อมต่อ (${langObj?.label || langCode})...`;
+    setStatus('player.connecting', langCode);
     isConnecting = true;
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -113,7 +132,7 @@
     ws = currentWs;
 
     currentWs.onopen = () => {
-      status = `กำลังเตรียมพากย์: ${langObj?.label || langCode}`;
+      setStatus('player.preparing', langCode);
     };
 
     currentWs.onmessage = (event) => {
@@ -122,19 +141,19 @@
         if (data.type === 'ready') {
           isConnecting = false;
           isDubbing = true;
-          status = `กำลังพากย์: ${langObj?.label || langCode}`;
+          setStatus('player.dubbing', langCode);
           setOriginalAudioMuted(true);
         } else if (data.type === 'error') {
           isConnecting = false;
           isDubbing = false;
-          status = `ผิดพลาด: ${data.message}`;
+          setStatus('player.error', '', String(data.message));
           setOriginalAudioMuted(false);
         } else if (data.type === 'dubbed_audio') {
           playDubbedChunk(data.audio);
         }
       } catch (error) {
         console.error('Unable to read dubbing server message:', error);
-        status = 'ผิดพลาด: ได้รับข้อมูลจากเซิร์ฟเวอร์ไม่ถูกต้อง';
+        setStatus('player.errorInvalidResponse');
         isConnecting = false;
         isDubbing = false;
         setOriginalAudioMuted(false);
@@ -145,7 +164,7 @@
       if (ws === currentWs) {
         isConnecting = false;
         isDubbing = false;
-        status = 'ผิดพลาด: เชื่อมต่อเซิร์ฟเวอร์พากย์ไม่ได้';
+        setStatus('player.errorConnection');
         setOriginalAudioMuted(false);
         currentWs.close();
       }
@@ -154,7 +173,7 @@
     currentWs.onclose = () => {
       if (ws === currentWs) {
         isDubbing = false;
-        if (!status.startsWith('ผิดพลาด:')) status = 'เสียงต้นฉบับ';
+        if (!statusKey.startsWith('player.error')) setStatus('player.original');
         setOriginalAudioMuted(false);
       }
     };
@@ -178,7 +197,7 @@
       ws = null;
       isConnecting = false;
       isDubbing = false;
-      status = 'เสียงต้นฉบับ';
+      setStatus('player.original');
       setOriginalAudioMuted(false);
     }
   }
@@ -321,7 +340,7 @@
 
   <div class="controls-bar">
     <button onclick={togglePlay} class="control-btn">
-      {isPlaying ? '⏸ หยุด' : '▶ เล่น'}
+      {isPlaying ? t('player.pause') : t('player.play')}
     </button>
 
     <input
@@ -336,10 +355,10 @@
     <button
       onclick={toggleFullscreen}
       class="control-btn fullscreen-btn"
-      aria-label={isFullscreen ? 'ออกจากเต็มจอ' : 'เปิดเต็มจอ'}
+      aria-label={isFullscreen ? t('player.exitFullscreenAria') : t('player.enterFullscreenAria')}
       aria-pressed={isFullscreen}
     >
-      {isFullscreen ? 'ย่อจอ' : 'เต็มจอ'}
+      {isFullscreen ? t('player.exitFullscreen') : t('player.enterFullscreen')}
     </button>
 
     <div class="dub-controls-group">
@@ -347,10 +366,10 @@
         bind:value={targetLang}
         onchange={handleLanguageChange}
         class="lang-select"
-        aria-label="เลือกภาษาพากย์"
+        aria-label={t('player.dubLanguage')}
       >
         {#each LANGUAGES as lang}
-          <option value={lang.code}>{lang.label}</option>
+          <option value={lang.code}>{lang.flag} {t(`language.${lang.name}`)}</option>
         {/each}
       </select>
 
@@ -359,7 +378,7 @@
         class="dub-btn"
         class:active={isDubbing || isConnecting}
       >
-        {isDubbing || isConnecting ? '⏹ ปิดพากย์' : '✨ พากย์ AI'}
+        {isDubbing || isConnecting ? t('player.stopDubbing') : t('player.startDubbing')}
       </button>
     </div>
   </div>

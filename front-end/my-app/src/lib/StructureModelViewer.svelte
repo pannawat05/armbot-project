@@ -1,10 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
+	import { preferences, t } from '#lib/site-preferences.svelte.js';
 
 	let { selectedPart = $bindable('base') } = $props();
 
 	let viewport = $state(/** @type {HTMLDivElement | null} */ (null));
-	let status = $state('กำลังโหลดโมเดล…');
+	let status = $state({ key: 'viewer.loading', params: {} });
 	let loadError = $state('');
 	let meshParts = $state([]);
 	let resetCamera = $state(() => {});
@@ -14,82 +15,82 @@
 	const partGroups = [
 		{
 			id: 'base',
-			label: 'ฐาน',
-			title: 'ฐานหมุน',
-			description: 'ฐานหมุนที่ต่อกับ base_link_upper ใช้เซอร์โว MG996R ตามสเปก ARMbot พร้อมชุดตลับลูกปืน',
 			components: ['MG996R servo', 'Base casing', 'Rotating disc', 'Bearing race and fasteners']
 		},
 		{
 			id: 'column',
-			label: 'เสาตั้ง',
-			title: 'เสาและโครงยก',
-			description: 'โครงเสาตั้งและรางด้านข้างเชื่อมฐานเข้ากับข้อต่อบ่า',
 			components: ['Column front face', 'Side rails', 'Rear cover', 'Column fasteners']
 		},
 		{
 			id: 'shoulder',
-			label: 'บ่า',
-			title: 'ข้อต่อบ่า',
-			description: 'ชุด housing และ bearing ที่บ่า ใช้เซอร์โว 8125MG ตามสเปก ARMbot',
 			components: ['Shoulder housing', 'Bearing and flange', '8125MG servo', 'Motor cover']
 		},
 		{
 			id: 'upperArm',
-			label: 'แขนบน',
-			title: 'ท่อนแขนบน',
-			description: 'โครงแขนส่วนบนแบบเปลือกประกบ พร้อมแผงปิดและแนวเดินสาย',
 			components: ['Upper arm shell', 'Front/rear panels', 'Shell caps', 'Shoulder wiring']
 		},
 		{
 			id: 'elbow',
-			label: 'ศอก',
-			title: 'ข้อต่อศอก',
-			description: 'ชุด housing และวงแหวนข้อต่อ ใช้เซอร์โว MG996R ตามสเปก ARMbot',
 			components: ['Elbow housing', 'Outer ring and bezel', 'MG996R servo', 'Ring bolts']
 		},
 		{
 			id: 'forearm',
-			label: 'แขนล่าง',
-			title: 'ท่อนแขนล่าง',
-			description: 'โครงแขนช่วงปลายแบบเปลือกประกบ มีแผงและแนวสายไปยังข้อมือ',
 			components: ['Forearm shell', 'Front/rear panels', 'Shell caps', 'Elbow wiring']
 		},
 		{
 			id: 'wrist',
-			label: 'ข้อมือ',
-			title: 'ข้อต่อข้อมือ',
-			description: 'housing ข้อมือพร้อมเซอร์โว MG90S ก่อนถึงชุด gripper',
 			components: ['Wrist housing', 'Outer ring', 'MG90S servo', 'Wrist wiring']
 		},
 		{
 			id: 'gripper',
-			label: 'กริปเปอร์',
-			title: 'ชุดหยิบจับ',
-			description: 'ฝ่ามือ ขากรรไกรบน/ล่าง แผ่นสัมผัส และลิงก์เชื่อมที่ขับด้วย MG90S',
 			components: ['Gripper palm', 'Upper/lower jaws and pads', 'Linkages and pivots', 'MG90S servo']
 		},
 		{
 			id: 'camera',
-			label: 'กล้อง',
-			title: 'กล้อง ESP32-CAM',
-			description: 'ชุดกล้อง ESP32-CAM พร้อมโมดูล OV2640 และขายึด',
 			components: ['ESP32-CAM PCB', 'OV2640 lens', 'RF shield', 'Camera mount']
 		},
 		{
 			id: 'raspberryPi',
-			label: 'Raspberry Pi 5',
-			title: 'คอมพิวเตอร์ Raspberry Pi 5',
-			description: 'คอมพิวเตอร์หลักสำหรับประมวลผลและควบคุมระบบ เชื่อมกับบอร์ด PCA9685 ผ่าน I²C',
 			components: ['BCM2712 processor', '40-pin GPIO header', 'USB and micro-HDMI ports', 'Wireless network']
 		},
 		{
 			id: 'pca9685',
-			label: 'PCA9685',
-			title: 'บอร์ดขับเซอร์โว PCA9685',
-			description: 'บอร์ด PWM 16 ช่อง รับคำสั่งจาก Raspberry Pi 5 ผ่าน I²C แล้วส่งสัญญาณควบคุมเซอร์โว',
 			components: ['16-channel, 12-bit PWM driver', 'SDA / SCL I²C', 'Servo signal headers', 'External servo power input']
 		}
 	];
+
+	const componentTranslations = {
+		th: {
+			base: ['เซอร์โว MG996R', 'ฝาครอบฐาน', 'จานหมุน', 'ชุดลูกปืนและตัวยึด'],
+			column: ['แผงด้านหน้าเสา', 'รางด้านข้าง', 'ฝาครอบด้านหลัง', 'สกรูยึดเสา'],
+			shoulder: ['โครงหุ้มข้อต่อบ่า', 'ลูกปืนและหน้าแปลน', 'เซอร์โว 8125MG', 'ฝาครอบมอเตอร์'],
+			upperArm: ['เปลือกแขนบน', 'แผงด้านหน้า/ด้านหลัง', 'ฝาปิดเปลือก', 'สายไฟข้อต่อบ่า'],
+			elbow: ['โครงหุ้มข้อต่อศอก', 'วงแหวนและขอบครอบ', 'เซอร์โว MG996R', 'สลักเกลียววงแหวน'],
+			forearm: ['เปลือกแขนล่าง', 'แผงด้านหน้า/ด้านหลัง', 'ฝาปิดเปลือก', 'สายไฟข้อต่อศอก'],
+			wrist: ['โครงหุ้มข้อมือ', 'วงแหวนรอบนอก', 'เซอร์โว MG90S', 'สายไฟข้อมือ'],
+			gripper: ['ฝ่ามือกริปเปอร์', 'ปากจับบน/ล่างและแผ่นรอง', 'ก้านเชื่อมและจุดหมุน', 'เซอร์โว MG90S'],
+			camera: ['แผงวงจร ESP32-CAM', 'เลนส์ OV2640', 'แผ่นป้องกันสัญญาณรบกวน', 'ขายึดกล้อง'],
+			raspberryPi: ['ชิปประมวลผล BCM2712', 'ขา GPIO 40 พิน', 'พอร์ต USB และ micro-HDMI', 'เครือข่ายไร้สาย'],
+			pca9685: ['ไดรเวอร์ PWM 16 ช่อง 12 บิต', 'I²C SDA / SCL', 'ขาสัญญาณเซอร์โว', 'ช่องจ่ายไฟเซอร์โวภายนอก']
+		},
+		ja: {
+			base: ['MG996Rサーボ', 'ベースケース', '回転ディスク', 'ベアリングと固定具'],
+			column: ['支柱前面パネル', 'サイドレール', '背面カバー', '支柱固定具'],
+			shoulder: ['ショルダーハウジング', 'ベアリングとフランジ', '8125MGサーボ', 'モーターカバー'],
+			upperArm: ['上腕シェル', '前面/背面パネル', 'シェルキャップ', 'ショルダー配線'],
+			elbow: ['エルボーハウジング', '外側リングとベゼル', 'MG996Rサーボ', 'リングボルト'],
+			forearm: ['前腕シェル', '前面/背面パネル', 'シェルキャップ', '肘配線'],
+			wrist: ['手首ハウジング', '外側リング', 'MG90Sサーボ', '手首配線'],
+			gripper: ['グリッパー本体', '上下の爪とパッド', 'リンク機構と支点', 'MG90Sサーボ'],
+			camera: ['ESP32-CAM基板', 'OV2640レンズ', 'RFシールド', 'カメラマウント'],
+			raspberryPi: ['BCM2712プロセッサ', '40ピンGPIOヘッダー', 'USBおよびmicro-HDMIポート', '無線ネットワーク'],
+			pca9685: ['16チャンネル12ビットPWMドライバー', 'I²C SDA / SCL', 'サーボ信号ヘッダー', '外部サーボ電源入力']
+		}
+	};
+
+	function getComponents(part) {
+		return componentTranslations[preferences.locale]?.[part.id] ?? part.components;
+	}
 
 	function getPartId(name) {
 		if (/^Base_/.test(name)) return 'base';
@@ -249,7 +250,7 @@
 				renderer.outputColorSpace = THREE.SRGBColorSpace;
 				renderer.toneMapping = THREE.ACESFilmicToneMapping;
 				renderer.toneMappingExposure = 1.15;
-				renderer.domElement.setAttribute('aria-label', 'Interactive ARMbot structure model');
+				renderer.domElement.setAttribute('aria-label', t('viewer.canvas'));
 				viewport.appendChild(renderer.domElement);
 
 				scene.add(new THREE.HemisphereLight(0xf4f5ed, 0x33382e, 2));
@@ -382,19 +383,26 @@
 				renderer.domElement.addEventListener('pointerup', handlePointerUp);
 				renderer.domElement.addEventListener('pointerleave', handlePointerLeave);
 
+				let renderedCanvasLabel = t('viewer.canvas');
 				const render = () => {
 					if (disposed) return;
 					animationFrame = window.requestAnimationFrame(render);
 					controls.update();
+					scene.background.setHex(preferences.theme === 'light' ? 0xf3f4ef : 0x121410);
+					const canvasLabel = t('viewer.canvas');
+					if (canvasLabel !== renderedCanvasLabel) {
+						renderer.domElement.setAttribute('aria-label', canvasLabel);
+						renderedCanvasLabel = canvasLabel;
+					}
 					renderer.render(scene, camera);
 				};
 				render();
-				status = `${interactiveMeshes.length} ชิ้นส่วน · คลิกเพื่อดูรายละเอียด`;
+				status = { key: 'viewer.loaded', params: { count: interactiveMeshes.length } };
 			} catch (error) {
 				console.error('Unable to load the ARMbot structure model:', error);
 				if (!disposed) {
-					status = 'ไม่สามารถโหลดโมเดลได้';
-					loadError = 'โหลดโมเดลไม่สำเร็จ กรุณารีเฟรชหน้าเพื่อลองอีกครั้ง';
+				status = { key: 'viewer.loadFailed', params: {} };
+				loadError = 'viewer.loadError';
 				}
 			}
 		}
@@ -424,29 +432,31 @@
 	let activePart = $derived(partGroups.find((part) => part.id === selectedPart) ?? partGroups[0]);
 </script>
 
-<section class="structure-viewer" aria-label="Interactive ARMbot 3D structure">
+<section class="structure-viewer" aria-label={t('viewer.aria')}>
 	<div class="model-panel">
 		<div class="viewer-toolbar">
 			<div>
-				<p class="eyebrow"><span></span> INTERACTIVE GLB MODEL</p>
-				<p class="viewer-status">{status}</p>
+				<p class="eyebrow"><span></span> {t('viewer.model')}</p>
+				<p class="viewer-status">{t(status.key, status.params)}</p>
 			</div>
 			<div class="viewer-actions">
-				<span class="orbit-hint">ลากเพื่อหมุน · เลื่อนเพื่อซูม · คลิกเลือกชิ้นส่วน</span>
-				<button class="reset-button" onclick={resetCamera} aria-label="Reset camera view">RESET</button>
+				<span class="orbit-hint">{t('viewer.rotateHint')}</span>
+				<button class="reset-button" onclick={resetCamera} aria-label={t('viewer.resetAria')}>
+					{t('viewer.reset')}
+				</button>
 			</div>
 		</div>
 		<div class="model-viewport" bind:this={viewport}>
 			{#if loadError}
-				<p class="load-error" role="alert">{loadError}</p>
+				<p class="load-error" role="alert">{t(loadError)}</p>
 			{/if}
 		</div>
 	</div>
 
-	<aside class="component-panel" aria-label="รายการชิ้นส่วน">
-		<p class="eyebrow">COMPONENT MAP</p>
-		<h2>เลือกดูส่วนประกอบ</h2>
-		<p class="panel-intro">เลือกจากรายการหรือคลิกชิ้นส่วนบนโมเดล</p>
+	<aside class="component-panel" aria-label={t('viewer.partsAria')}>
+		<p class="eyebrow">{t('viewer.componentMap')}</p>
+		<h2>{t('viewer.choosePart')}</h2>
+		<p class="panel-intro">{t('viewer.chooseHint')}</p>
 		<div class="part-buttons">
 			{#each partGroups as part (part.id)}
 				<button
@@ -455,17 +465,17 @@
 					onclick={() => selectPart(part.id)}
 				>
 					<span class="part-index">{String(partGroups.indexOf(part) + 1).padStart(2, '0')}</span>
-					<span>{part.label}</span>
+					<span>{t(`part.${part.id}.label`)}</span>
 					<span class="part-arrow" aria-hidden="true">↗</span>
 				</button>
 			{/each}
 		</div>
 		<div class="part-details" aria-live="polite">
-			<p class="eyebrow">SELECTED PART</p>
-			<h3>{activePart.title}</h3>
-			<p>{activePart.description}</p>
+			<p class="eyebrow">{t('viewer.selectedPart')}</p>
+			<h3>{t(`part.${activePart.id}.title`)}</h3>
+			<p>{t(`part.${activePart.id}.description`)}</p>
 			<ul>
-				{#each activePart.components as component (component)}
+				{#each getComponents(activePart) as component (component)}
 					<li>{component}</li>
 				{/each}
 			</ul>

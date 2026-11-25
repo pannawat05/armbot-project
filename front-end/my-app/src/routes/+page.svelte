@@ -1,53 +1,52 @@
+<script>
+	import { t } from '#lib/site-preferences.svelte.js';
+</script>
+
 <svelte:head>
-	<title>ARMbot — Intelligent Pick &amp; Place</title>
-	<meta
-		name="description"
-		content="ARMbot แขนกล 6 แกนสำหรับงานหยิบจับอัตโนมัติด้วย Computer Vision และระบบควบคุมแบบกระจาย"
-	/>
+	<title>ARMbot — {t('home.visualLine')}</title>
+	<meta name="description" content={t('home.meta')} />
 </svelte:head>
 
 <main class="home">
 	<section class="hero">
 		<div class="hero-copy">
-			<p class="eyebrow"><span class="live-dot"></span> ROBOTICS · COMPUTER VISION · AUTOMATION</p>
-			<h1>See it.<br />Think it.<br /><span>Pick it.</span></h1>
+			<p class="eyebrow"><span class="live-dot"></span> {t('home.eyebrow')}</p>
+			<h1>{t('home.hero1')}<br />{t('home.hero2')}<br /><span>{t('home.hero3')}</span></h1>
 			<p class="intro">
-				ARMbot แขนกล 6 แกนที่เชื่อมการมองเห็น การตัดสินใจ และการเคลื่อนไหว
-				ให้เป็นระบบหยิบจับอัตโนมัติ ตั้งแต่กล้องจนถึงปลาย gripper
+				{t('home.intro')}
 			</p>
 
 			<div class="hero-actions">
-				<a class="button button-primary" href="/demo">เปิดหน้า Demo <span>↗</span></a>
-				<a class="button button-quiet" href="/structure">สำรวจ Structure <span>↗</span></a>
+				<a class="button button-primary" href="/demo">{t('home.openDemo')} <span>↗</span></a>
+				<a class="button button-quiet" href="/structure">{t('home.explore')} <span>↗</span></a>
 			</div>
 
-			<div class="hero-specs" aria-label="Project highlights">
-				<div><strong>06</strong><span>DEGREES OF FREEDOM</span></div>
-				<div><strong>CV</strong><span>OBJECT DETECTION</span></div>
-				<div><strong>RPi</strong><span>EDGE CONTROL</span></div>
+			<div class="hero-specs" aria-label={t('home.highlights')}>
+				<div><strong>06</strong><span>{t('home.dof')}</span></div>
+				<div><strong>CV</strong><span>{t('home.detection')}</span></div>
+				<div><strong>RPi</strong><span>{t('home.edge')}</span></div>
 			</div>
 		</div>
 
 		<div class="hero-visual">
-			<img src="/images/armbot-demo.png" alt="ต้นแบบ ARMbot แขนกลพร้อมกล้องและเซนเซอร์" />
+			<img src="/images/armbot-demo.png" alt={t('home.imageAlt')} />
 			<div class="image-shade"></div>
 			<div class="visual-label">
-				<span>01 / WORKING PROTOTYPE</span>
-				<strong>Built to see. Made to move.</strong>
+				<span>{t('home.prototype')}</span>
+				<strong>{t('home.visualLine')}</strong>
 			</div>
-			<div class="visual-coordinate">6-DOF PICK &amp; PLACE</div>
+			<div class="visual-coordinate">{t('home.coordinate')}</div>
 		</div>
 	</section>
 
 	<section class="project-section">
 		<div class="section-heading">
 			<div>
-				<p class="eyebrow">THE SYSTEM</p>
-				<h2>จากการมองเห็น<br /><span>สู่การลงมือทำ</span></h2>
+				<p class="eyebrow">{t('home.system')}</p>
+				<h2>{t('home.systemTitle1')}<br /><span>{t('home.systemTitle2')}</span></h2>
 			</div>
 			<p class="section-note">
-				ระบบต้นแบบสำหรับตรวจจับวัตถุและจัดการงานหยิบ-วาง
-				ออกแบบให้แต่ละส่วนสื่อสารและตรวจสอบสถานะได้
+				{t('home.systemNote')}
 			</p>
 		</div>
 
@@ -55,24 +54,24 @@
 			<article class="system-card">
 				<span class="card-index">01</span>
 				<div class="card-icon" aria-hidden="true">◎</div>
-				<h3>Computer Vision</h3>
-				<p>ใช้กล้องและโมเดล YOLO ตรวจจับวัตถุ ก่อนแปลงผลเป็นเป้าหมายสำหรับแขนกล</p>
+				<h3>{t('home.vision')}</h3>
+				<p>{t('home.visionDesc')}</p>
 				<span class="card-tag">CAMERA · YOLO</span>
 			</article>
 
 			<article class="system-card">
 				<span class="card-index">02</span>
 				<div class="card-icon" aria-hidden="true">⌁</div>
-				<h3>Motion Control</h3>
-				<p>ควบคุมเซอร์โว 6 แกนผ่าน PCA9685 พร้อม C++ daemon และลำดับงาน pick &amp; place</p>
+				<h3>{t('home.motion')}</h3>
+				<p>{t('home.motionDesc')}</p>
 				<span class="card-tag">6-DOF · PCA9685</span>
 			</article>
 
 			<article class="system-card">
 				<span class="card-index">03</span>
 				<div class="card-icon" aria-hidden="true">↗</div>
-				<h3>Connected Workflow</h3>
-				<p>Python pipeline และ MQTT เชื่อมงานตรวจจับ คิวหยิบจับ และหน้า dashboard</p>
+				<h3>{t('home.workflow')}</h3>
+				<p>{t('home.workflowDesc')}</p>
 				<span class="card-tag">PYTHON · MQTT</span>
 			</article>
 		</div>
@@ -80,14 +79,14 @@
 
 	<section class="demo-callout">
 		<div>
-			<p class="eyebrow">TRY IT YOURSELF</p>
-			<h2>ทดลองใช้งาน<br /><span>และสำรวจ ARMbot</span></h2>
+			<p class="eyebrow">{t('home.try')}</p>
+			<h2>{t('home.tryTitle1')}<br /><span>{t('home.tryTitle2')}</span></h2>
 		</div>
-		<p>ทดลองเล่นวิดีโอ สำรวจชิ้นส่วน 3D หรือดูภาพขั้นตอนการทำงานจริง</p>
+		<p>{t('home.tryDesc')}</p>
 		<div class="callout-actions">
-			<a href="/demo">หน้า Demo <span>↗</span></a>
-			<a href="/structure">Structure <span>↗</span></a>
-			<a href="/working-steps">Working Steps <span>↗</span></a>
+			<a href="/demo">{t('home.demoLink')} <span>↗</span></a>
+			<a href="/structure">{t('home.structureLink')} <span>↗</span></a>
+			<a href="/working-steps">{t('home.stepsLink')} <span>↗</span></a>
 		</div>
 	</section>
 </main>
