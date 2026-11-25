@@ -19,6 +19,18 @@
 		<div class="heading-aside">
 			<p>{t('structure.description')}</p>
 			<a href="/working-steps">{t('structure.stepsLink')} <span>↗</span></a>
+			<a
+				class="model-reference"
+				href="https://omartronics.com/diy-6-dof-robotic-arm-build/#Download_the_3D_print_files_STL"
+				target="_blank"
+				rel="noopener noreferrer"
+				aria-label={`${t('structure.modelReference')}: DIY 6-DOF Robotic Arm, Omar Draidrya`}
+			>
+				<span class="reference-label">{t('structure.modelReference')}</span>
+				<strong>DIY 6-DOF Robotic Arm</strong>
+				<small>Omar Draidrya · Omartronics ↗</small>
+			</a>
+			<p class="reference-note">{t('structure.modelReferenceNote')}</p>
 		</div>
 	</section>
 
@@ -92,6 +104,44 @@
 
 	.heading-aside a span {
 		margin-left: 6px;
+	}
+
+	.heading-aside .model-reference {
+		display: flex;
+		flex-direction: column;
+		gap: 5px;
+		margin-top: 18px;
+		padding: 12px 14px;
+		border: 1px solid rgba(240, 241, 235, 0.14);
+		border-radius: 8px;
+		background: rgba(240, 241, 235, 0.03);
+		text-decoration: none;
+		transition: border-color 160ms ease, background 160ms ease;
+	}
+
+	.heading-aside .model-reference:hover {
+		border-color: rgba(211, 243, 107, 0.5);
+		background: rgba(211, 243, 107, 0.05);
+	}
+
+	.model-reference .reference-label,
+	.model-reference small {
+		color: #a7aaa0;
+		font-size: 10px;
+		line-height: 1.5;
+	}
+
+	.model-reference strong {
+		color: #f0f1eb;
+		font-size: 13px;
+		font-weight: 600;
+	}
+
+	.reference-note {
+		margin: 8px 0 0;
+		color: #82867b;
+		font-size: 10px;
+		line-height: 1.6;
 	}
 
 	@media (max-width: 800px) {

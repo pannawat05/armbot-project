@@ -155,6 +155,26 @@ html[data-theme='light'] .frame-image {
 	background: #eceee7;
 }
 
+html[data-theme='light'] .heading-aside .model-reference {
+	border-color: rgba(32, 36, 27, 0.14);
+	background: rgba(32, 36, 27, 0.025);
+}
+
+html[data-theme='light'] .heading-aside .model-reference:hover {
+	border-color: rgba(100, 125, 22, 0.45);
+	background: rgba(100, 125, 22, 0.06);
+}
+
+html[data-theme='light'] .model-reference .reference-label,
+html[data-theme='light'] .model-reference small,
+html[data-theme='light'] .reference-note {
+	color: #656b5d;
+}
+
+html[data-theme='light'] .model-reference strong {
+	color: #20241b;
+}
+
 @media (max-width: 760px) {
 	html[data-theme='light'] nav {
 		border-color: rgba(32, 36, 27, 0.14);
