@@ -177,11 +177,17 @@
 	@media (max-width: 640px) {
 		.header-inner {
 			width: calc(100% - 32px);
-			height: 68px;
-			gap: 14px;
+			height: auto;
+			min-height: 68px;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			gap: 10px 12px;
+			padding: 12px 0 10px;
 		}
 
 		.brand {
+			grid-column: 1;
+			grid-row: 1;
 			font-size: 13px;
 			gap: 7px;
 		}
@@ -192,19 +198,35 @@
 		}
 
 		nav {
-			gap: 8px;
+			grid-column: 1 / -1;
+			grid-row: 2;
+			width: 100%;
+			justify-content: space-between;
+			gap: 14px;
+			overflow-x: auto;
+			scrollbar-width: none;
+		}
+
+		nav::-webkit-scrollbar {
+			display: none;
 		}
 
 		nav a {
-			font-size: 10px;
+			flex: 0 0 auto;
+			font-size: 11px;
 		}
 
 		.github-link {
-			display: none;
+			grid-column: 2;
+			grid-row: 1;
+			padding: 8px 10px;
+			font-size: 11px;
 		}
 
 		.site-footer {
 			width: calc(100% - 32px);
+			flex-direction: column;
+			align-items: flex-start;
 			font-size: 10px;
 		}
 	}

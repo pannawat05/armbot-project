@@ -526,13 +526,15 @@
 		}
 
 		.demo-callout {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 			gap: 20px;
 			padding: 24px;
 		}
 
 		.callout-actions {
 			grid-column: auto;
+			flex-direction: column;
+			align-items: flex-start;
 		}
 	}
 </style>

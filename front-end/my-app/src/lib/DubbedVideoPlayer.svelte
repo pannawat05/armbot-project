@@ -518,6 +518,56 @@
     box-shadow: 0 0 15px rgba(211, 243, 107, 0.28);
   }
 
+  @media (max-width: 600px) {
+    .badge {
+      top: 8px;
+      right: 8px;
+      max-width: calc(100% - 16px);
+      overflow: hidden;
+      padding: 5px 10px;
+      font-size: 0.74rem;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .controls-bar {
+      display: grid;
+      grid-template-columns: auto minmax(24px, 1fr) auto;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .control-btn {
+      padding: 7px 9px;
+      font-size: 0.78rem;
+    }
+
+    .progress-bar {
+      min-width: 0;
+    }
+
+    .dub-controls-group {
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      justify-content: space-between;
+    }
+
+    .lang-select {
+      min-width: 0;
+      flex: 1;
+      padding: 6px;
+      font-size: 0.8rem;
+    }
+
+    .dub-btn {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+  }
+
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
